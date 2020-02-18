@@ -69,14 +69,14 @@ namespace AspNetCore3xEndpointSample
 
                 var routeBuilder = endpoints.MapODataServiceRoute("odataPrefix", "odata/{dataSource}", containerBuilder =>
                 {
-                    containerBuilder.AddService(Microsoft.OData.ServiceLifetime.Transient, typeof(IEdmModel), sp =>
+                    containerBuilder.AddService(Microsoft.OData.ServiceLifetime.Scoped, typeof(IEdmModel), sp =>
                     {
                         var serviceScope = sp.GetRequiredService<HttpRequestScope>();                        
                         IEdmModel model = DataSourceProvider.GetEdmModel(serviceScope.HttpRequest);
                         return model;
                     });
 
-                    containerBuilder.AddService(Microsoft.OData.ServiceLifetime.Transient, typeof(IEnumerable<IODataRoutingConvention>), sp =>
+                    containerBuilder.AddService(Microsoft.OData.ServiceLifetime.Scoped, typeof(IEnumerable<IODataRoutingConvention>), sp =>
                     {
                         IList<IODataRoutingConvention> routingConventions = ODataRoutingConventions.CreateDefault();
                         routingConventions.Insert(0, new MatchAllRoutingConvention());
