@@ -42,12 +42,12 @@ namespace Microsoft.AspNet.OData.Routing
         /// <summary>
         /// Get the OData path from the url and query string.
         /// </summary>
-        /// <param name="dataPath">The ODataPath from the route values.</param>
-        /// <param name="thePath">The Uri from start to end of path, i.e. the left portion.</param>
+        /// <param name="oDataPathString">The ODataPath from the route values.</param>
+        /// <param name="uriPathString">The Uri from start to end of path, i.e. the left portion.</param>
         /// <param name="queryString">The Uri from the query string to the end, i.e. the right portion.</param>
         /// <param name="requestContainerFactory">The request container factory.</param>
         /// <returns>The OData path.</returns>
-        public static ODataPath GetODataPath(string dataPath, string thePath, string queryString, Func<IServiceProvider> requestContainerFactory)
+        internal static ODataPath GetODataPath(string oDataPathString, string uriPathString, string queryString, Func<IServiceProvider> requestContainerFactory)
         {
             ODataPath path = null;
 
@@ -67,17 +67,17 @@ namespace Microsoft.AspNet.OData.Routing
                 // reliable way to determine the original string from which oDataPathString was derived.
                 // Therefore a straightforward string comparison won't always work.  See RemoveODataPath() for
                 // details of chosen approach.
-                string serviceRoot = thePath;
+                string serviceRoot = uriPathString;
 
-                if (!String.IsNullOrEmpty(dataPath))
+                if (!String.IsNullOrEmpty(oDataPathString))
                 {
-                    serviceRoot = RemoveODataPath(serviceRoot, dataPath);
+                    serviceRoot = RemoveODataPath(serviceRoot, oDataPathString);
                 }
 
                 // As mentioned above, we also need escaped ODataPath.
                 // The requestLeftPart and request.QueryString are both escaped.
                 // The ODataPath for service documents is empty.
-                string oDataPathAndQuery = thePath.Substring(serviceRoot.Length);
+                string oDataPathAndQuery = uriPathString.Substring(serviceRoot.Length);
 
                 if (!String.IsNullOrEmpty(queryString))
                 {

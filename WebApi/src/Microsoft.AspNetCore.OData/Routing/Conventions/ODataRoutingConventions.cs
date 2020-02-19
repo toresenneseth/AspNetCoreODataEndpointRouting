@@ -40,11 +40,11 @@ namespace Microsoft.AspNet.OData.Routing.Conventions
         }
 
         /// <summary>
-        /// 
+        /// Creates a mutable list of the default OData routing conventions with attribute routing enabled.
         /// </summary>
-        /// <param name="routeName"></param>
-        /// <param name="serviceProvider"></param>
-        /// <returns></returns>
+        /// <param name="routeName">The name of the route.</param>
+        /// <param name="serviceProvider">The service provider.</param>
+        /// <returns>A mutable list of the default OData routing conventions.</returns>
         public static IList<IODataRoutingConvention> CreateDefaultWithAttributeRouting(
             string routeName,
             IServiceProvider serviceProvider)

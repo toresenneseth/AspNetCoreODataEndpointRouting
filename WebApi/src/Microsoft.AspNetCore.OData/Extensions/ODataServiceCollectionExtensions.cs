@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License.  See License.txt in the project root for license information.
 
+using System;
 using System.Linq;
 using Microsoft.AspNet.OData.Batch;
 using Microsoft.AspNet.OData.Common;
@@ -35,10 +36,6 @@ namespace Microsoft.AspNet.OData.Extensions
             {
                 throw Error.ArgumentNull(nameof(services));
             }
-#if NETCOREAPP3_1
-            services.AddSingleton<ODataTranslationTransformer>();
-            services.AddSingleton<LinkGenerator, ODataLinkGenerator>();
-#endif
 
             // Setup per-route dependency injection. When routes are added, additional
             // per-route classes will be injected, such as IEdmModel and IODataRoutingConventions.
@@ -92,7 +89,27 @@ namespace Microsoft.AspNet.OData.Extensions
                 return new ODataActionSelector((IActionSelector)s.GetRequiredService(selector.ImplementationType));
             });
 
-            services.AddSingleton<EndpointSelector, ODataEndpointSelector>();
+            services.AddSingleton<ODataEndpointRouteValueTransformer>();
+
+            // EndpointSelector
+            var endpointSelector = services.First(s => s.ServiceType == typeof(EndpointSelector) && s.ImplementationType != null);
+            services.Remove(endpointSelector);
+            services.Add(new ServiceDescriptor(endpointSelector.ImplementationType, endpointSelector.ImplementationType, ServiceLifetime.Singleton));
+
+            services.AddSingleton<EndpointSelector>(s =>
+            {
+                return new ODataEndpointSelector((EndpointSelector)s.GetRequiredService(endpointSelector.ImplementationType));
+            });
+
+            // LinkGenerator
+            var linkGenerator = services.First(s => s.ServiceType == typeof(LinkGenerator) && s.ImplementationType != null);
+            services.Remove(linkGenerator);
+            services.Add(new ServiceDescriptor(linkGenerator.ImplementationType, linkGenerator.ImplementationType, ServiceLifetime.Singleton));
+
+            services.AddSingleton<LinkGenerator>(s =>
+            {
+                return new ODataEndpointLinkGenerator((LinkGenerator)s.GetRequiredService(linkGenerator.ImplementationType));
+            });
 #endif
 
             // Add the ActionContextAccessor; this allows access to the ActionContext which is needed

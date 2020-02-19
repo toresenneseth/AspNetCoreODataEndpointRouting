@@ -65,9 +65,9 @@ namespace AspNetCore3xEndpointSample
 
             app.UseEndpoints(endpoints =>
             {                
-                //endpoints.Select().Expand().Filter().OrderBy().MaxTop(100).Count();                
+                endpoints.Select().Expand().Filter().OrderBy().MaxTop(100).Count();                
 
-                var routeBuilder = endpoints.MapODataServiceRoute("odataPrefix", "odata/{dataSource}", containerBuilder =>
+                var routeBuilder = endpoints.MapODataRoute("odataPrefix", "odata/{dataSource}", containerBuilder =>
                 {
                     containerBuilder.AddService(Microsoft.OData.ServiceLifetime.Scoped, typeof(IEdmModel), sp =>
                     {
